@@ -72,7 +72,7 @@ constants of `e` is a subset of `xs`.
 > values (App _ l r) = values l ++ values r
 
 > subbags :: [a] -> [[a]]
-> subbags xs = [zs | ys <- tails xs, zs <- permutations ys]
+> subbags = tails >=> permutations
 
 > solution :: Expr -> Int -> [Int] -> Bool
 > solution e n xs = eval e == [n] && values e `elem` subbags xs
@@ -196,9 +196,15 @@ Calculate 'results'.
 >              , e        <- combine lx rx
 >              ]
 
+Now the optimized solution is simply:
+
+> solution' :: [Int] -> Int -> [Expr]
+> solution' ns n = [e | ns' <- subbags ns, (e,m) <- results ns', m == n]
+
+This is quite efficient, with a divide-and-conquer flavour.
 
 === Credit
 
-This problem is adapted from Graham Hutton's beautiful paper *The Countdown Problem* [1]
+This problem is transcribed from Graham Hutton's beautiful paper *The Countdown Problem* [1]
 
 [1] http://www.cs.nott.ac.uk/~pszgmh/countdown.pdf
