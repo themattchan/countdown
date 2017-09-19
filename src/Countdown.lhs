@@ -1,6 +1,8 @@
 > module Countdown where
+> import Control.Monad ((>=>))
 > import Data.List
 > import Data.Bifunctor
+
 
 ==  The countdown problem
 
