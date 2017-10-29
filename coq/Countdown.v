@@ -1,3 +1,4 @@
+Module Countdown.
 Require Import Coq.Lists.List.
 Import ListNotations.
 Set Implicit Arguments.
@@ -35,9 +36,9 @@ Fixpoint eval (e : expr) : list Z :=
   | App op l r =>
     List.flat_map (fun x =>
       List.flat_map (fun y =>
-                       if valid op x y then [applyOp op x y] else []
-                    ) (eval r)
-                  ) (eval l)
+        if valid op x y then [applyOp op x y] else []
+      ) (eval r)
+    ) (eval l)
   end.
 
 Fixpoint values (e : expr) : list Z :=
@@ -53,20 +54,29 @@ Fixpoint tails {A:Type} (xs : list A) : list (list A) :=
   end.
 
 Fixpoint permutations {A:Type} (xs : list A) : list (list A) :=
-  let fix insert (x :A) (ys:list A) {measure List.length ys} : list (list A) :=
-    match ys with
-    | [] => [[x]]
-    | y::ys' => (x::ys) :: List.map (fun l => y::l) (insert x ys')
-    end
+  let fix insert (x : A) (ys : list A) {measure List.length ys} : list (list A) :=
+      match ys with
+      | [] => [[x]]
+      | y::ys' => (x::ys) :: List.map (fun l => y::l) (insert x ys')
+      end
   in List.fold_right (fun x a => List.flat_map (insert x) a) [[]] xs
 .
 
 Lemma size_of_permutations :
- forall {A:Type} (xs : list A),
- exists (n : nat),
- List.length xs = n ->
- List.length (permutations xs) = fact n.
+  forall {A:Type} (xs : list A),
+  exists (n : nat),
+    List.length xs = n ->
+    List.length (permutations xs) = fact n.
 Admitted.
 
 Fixpoint subbags {A:Type} (xs : list A) : list (list A) :=
   List.flat_map permutations (tails xs).
+
+End Countdown.
+
+(* import this  https://github.com/jwiegley/coq-haskell/blob/master/src/Haskell.v *)
+Require Extraction.
+Extraction Language Haskell.
+Extract Inductive list => "[]" [ "[]" "(:)" ].
+Extract Inductive prod => "(,)" ["(,)"].
+Extraction "Countdown_Extracted" Countdown.
