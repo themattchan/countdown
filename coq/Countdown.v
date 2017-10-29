@@ -61,5 +61,12 @@ Fixpoint permutations {A:Type} (xs : list A) : list (list A) :=
   in List.fold_right (fun x a => List.flat_map (insert x) a) [[]] xs
 .
 
+Lemma size_of_permutations :
+ forall {A:Type} (xs : list A),
+ exists (n : nat),
+ List.length xs = n ->
+ List.length (permutations xs) = fact n.
+Admitted.
+
 Fixpoint subbags {A:Type} (xs : list A) : list (list A) :=
   List.flat_map permutations (tails xs).
