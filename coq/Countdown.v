@@ -6,23 +6,17 @@ Require Import  ZArith.
 Require Import Coq.ZArith.Zbool.
 Open Scope Z_scope.
 
-Inductive op : Type :=
-| Add : op
-| Sub : op
-| Mul : op
-| Div : op
-.
+Inductive op : Type := Add | Sub | Mul | Div.
 
 Inductive expr : Type :=
 | Val : Z -> expr
 | App : op -> expr -> expr -> expr
 .
 
-Search Zle.
 Definition valid (o : op) (x : Z) (y : Z) : bool :=
   match o with
   | Add => true
-  | Sub =>  (Zgt_bool x y)
+  | Sub => Zgt_bool x y
   | Mul => true
   | Div => Zeq_bool (x mod y) 0
   end.
@@ -59,12 +53,13 @@ Fixpoint tails {A:Type} (xs : list A) : list (list A) :=
   end.
 
 Fixpoint permutations {A:Type} (xs : list A) : list (list A) :=
-  fix insert (x :A) (ys:list A) {ys} : list (list A) :=
+  let fix insert (x :A) (ys:list A) {measure List.length ys} : list (list A) :=
     match ys with
     | [] => [[x]]
-    | y::ys' => (x::ys) :: List.map (fun l => y::l) (insert x ys)
-    end.
-  in List.foldr (fun x a => List.flat_map (insert x) a) [[]] xs
+    | y::ys' => (x::ys) :: List.map (fun l => y::l) (insert x ys')
+    end
+  in List.fold_right (fun x a => List.flat_map (insert x) a) [[]] xs
+.
 
-Fixpoint subbags (xs : list A) : list (list A) :=
+Fixpoint subbags {A:Type} (xs : list A) : list (list A) :=
   List.flat_map permutations (tails xs).
