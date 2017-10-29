@@ -16,8 +16,11 @@ cabal-version:       >=1.10
 library
   hs-source-dirs:      src
   exposed-modules:     Countdown
+                     , Algebraic
+                     , Theorems.Countdown
   build-depends:       base >= 4.7 && < 5
                      , recursion-schemes
+                     , liquidhaskell >=0.8 && <0.9
   default-language:    Haskell2010
 
 test-suite countdown-test
